@@ -1,4 +1,5 @@
 import TitleBar from './TitleBar'
+import PianoView from './PianoView';
 import './Styles/Home.css'
 
 function Home() {
@@ -6,6 +7,7 @@ function Home() {
       <div>
       	<TitleBar />
       	<h1>Home</h1>
+        <PianoView />
       </div>
   );
 }
