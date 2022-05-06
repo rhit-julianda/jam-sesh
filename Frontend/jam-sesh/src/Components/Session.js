@@ -9,12 +9,12 @@ class Session{
   render(){
   return (
       <div>
-      <PianoView></PianoView>
+      <PianoView />
       <p>
       <h1>Session</h1>
       <h1>Join Code: {joinCode}</h1>
       </p>
-      <UserList></UserList>
+      <UserList />
       </div>
   );
   }
