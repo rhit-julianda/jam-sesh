@@ -1,6 +1,6 @@
 class UserList{
     constructor(){
-        var users = [];
+        this.users = [];
     }
 
     render() {
@@ -8,7 +8,7 @@ class UserList{
             <div>
             <h1>Users:</h1>
             <ul>
-            {users.map((user) => (
+            {this.users.map((user) => (
             <li>{user}</li>
             ))}
             </ul>
@@ -17,6 +17,8 @@ class UserList{
     }
 
     addUser(username){
-        users.add(username);
+        this.users.add(username);
     }
 }
+
+export default UserList;

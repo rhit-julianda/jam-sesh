@@ -1,5 +1,6 @@
 import TitleBar from './TitleBar'
 import PianoView from './PianoView';
+import Session from './Session';
 import './Styles/Home.css'
 
 function Home() {

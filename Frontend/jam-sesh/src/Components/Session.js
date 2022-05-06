@@ -2,8 +2,8 @@ import PianoView from "./PianoView";
 import UserList from "./UserList";
 
 class Session{
-  constructor(code){
-    const joinCode = code;
+  constructor(props){
+    this.joinCode = props.code;
   }
 
   render(){
@@ -12,12 +12,14 @@ class Session{
       <PianoView />
       <p>
       <h1>Session</h1>
-      <h1>Join Code: {joinCode}</h1>
+      <h1>Join Code: {this.joinCode}</h1>
       </p>
       <UserList />
       </div>
   );
   }
 }
+
+export default Session;
 
 
