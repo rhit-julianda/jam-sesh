@@ -3,9 +3,9 @@ import 'react-piano/dist/styles.css';
 import DimensionsProvider from './DimensionsProvider';
 import SoundfontProvider from './SoundfontProvider';
 
-function PianoView() {
-    const firstNote = MidiNumbers.fromNote('c4');
-    const lastNote = MidiNumbers.fromNote('g6');
+function Instrument({start, end, instrument, playable}) {
+    const firstNote = MidiNumbers.fromNote(start);
+    const lastNote = MidiNumbers.fromNote(end);
     const keyboardShortcuts = KeyboardShortcuts.create({
       firstNote: firstNote,
       lastNote: lastNote,
@@ -18,18 +18,18 @@ function PianoView() {
       <DimensionsProvider>
         {({ containerWidth, containerHeight }) => (
           <SoundfontProvider
-            instrumentName="acoustic_grand_piano"
+            instrumentName={instrument}
             audioContext={audioContext}
             hostname={soundfontHostname}
             render={({ isLoading, playNote, stopNote }) => (
-              <Piano
-                noteRange={{first: firstNote, last: lastNote}}
-                width={containerWidth}
-                playNote={playNote}
-                stopNote={stopNote}
-                disabled={isLoading}
-                keyboardShortcuts={keyboardShortcuts}
-              />
+                <Piano
+                  noteRange={{first: firstNote, last: lastNote}}
+                  width={containerWidth}
+                  playNote={playNote}
+                  stopNote={stopNote}
+                  disabled={!playable && !isLoading}
+                  keyboardShortcuts={keyboardShortcuts}
+                />
             )}
           />
         )}
@@ -37,4 +37,4 @@ function PianoView() {
     );
   }
 
-  export default PianoView;
+  export default Instrument;

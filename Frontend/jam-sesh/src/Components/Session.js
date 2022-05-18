@@ -1,27 +1,21 @@
-import PianoView from "./PianoView";
-import UserList from "./UserList";
 import React from "react";
+import SessionInfo from "./SessionInfo";
+import SessionView from "./SessionView";
+import InstrumentPlayer from "./InstrumentPlayer";
+import "./Styles/Session.css";
 
-class Session extends React.Component{
-  constructor(props){
-    super(props);
-    this.joinCode = props.code;
-    this.list = new UserList;
-    this.list.addUser('E');
-  }
-
-  render(){
+function Session({joinCode, userList}){
+  
   return( 
-  <div>
-      <PianoView />
-      <p>
+    <div>
+      <SessionInfo code={joinCode}/>
+      <SessionView instrumentList={['acoustic_grand_piano', 'acoustic_grand_piano']} userLists={[['Joe', 'Jim'], ['Jack']]}/>
+      <InstrumentPlayer instrument='viola' startNote='c4' endNote='g4'/>
       <h1>Session</h1>
-      <h1>Join Code: {this.joinCode}</h1>
-      </p>
-      <div>{this.list.render()}</div>
-      </div>
+      <h1>Join Code: {joinCode}</h1>
+      <div>{userList}</div>
+    </div>
   )
-  }
 }
 
 export default Session;

@@ -1,6 +1,5 @@
-import TitleBar from './TitleBar'
-import PianoView from './PianoView';
-import './Styles/Home.css'
+import TitleBar from './TitleBar';
+import './Styles/Home.css';
 import React from 'react';
 
 class Home extends React.Component{
