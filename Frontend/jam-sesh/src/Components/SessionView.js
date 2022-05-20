@@ -31,6 +31,14 @@ function SessionView({ instrumentList, myInstrumentID, setInstrument, sendMessag
                 <option>unselected</option>
                 <option>acoustic_grand_piano</option>
                 <option>violin</option>
+                <option>electric_guitar_clean</option>
+                <option>xylophone</option>
+                <option>banjo</option>
+                <option>ocarina</option>
+                <option>soprano_sax</option>
+                <option>tuba</option>
+                <option>marimba</option>
+                <option>glockenspiel</option>
             </select>
             <button onClick={create} style={{width:200}}>Create</button>
         </div>
