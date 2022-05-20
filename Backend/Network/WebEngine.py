@@ -29,7 +29,6 @@ class WebEngine:
 					mess = json.loads(message)
 				except:
 					continue
-				print(mess)
 				if "command" not in mess:
 					await websocket.send("Error: No command")
 					continue

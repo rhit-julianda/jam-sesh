@@ -12,6 +12,7 @@ function InstrumentView({instrument, userList, instrumentID, myID, joinFunction}
     }
     return (
         <div id='viewBox'>
+            <h1>Type: {instrument}</h1>
             <h1>Players: {userList.join(", ")}</h1>
             <div>
             	{button}
