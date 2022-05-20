@@ -14,6 +14,9 @@ function Session({joinCode, username}){
     const [endNote, setEndNote] = useState("g6");
     const [instrument, setInstrument] = useState("unselected");
     const [instrumentPlayer, setInstrumentPlayer] = useState(<div></div>);
+    const keys = ["c4", "c#4", "d4", "d#4", "e4", "f4", "f#4", "g4", "g#4", "a4", "a#4", "b4",
+                  "c5", "c#5", "d5", "d#5", "e5", "f5", "f#5", "g5", "g#5", "a5", "a#5", "b5",
+                  "c6", "c#6", "d6", "d#6", "e6", "f6", "f#6", "g6"];
     const { sendMessage, sendJsonMessage, lastMessage, lastJsonMessage, readyState } = useWebsocket(socketUrl);
 
     useEffect(() => {
