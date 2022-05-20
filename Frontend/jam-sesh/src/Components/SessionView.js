@@ -2,11 +2,7 @@ import React from "react";
 import InstrumentView from "./InstrumentView.js"
 import "./Styles/SessionView.css"
 
-var createInstrument = function() {
-    console.log("Create a new instrument");
-}
-
-function SessionView({ instrumentList, userLists }) {
+function SessionView({ instrumentList, userLists, setInstrument, sendMessage }) {
     const children = instrumentList.map((val, i) => (
               <InstrumentView key={String(i)}
                 instrument={val} 
@@ -16,7 +12,12 @@ function SessionView({ instrumentList, userLists }) {
     return (
         <div id="sessionView">
             {children}
-            <button style={{width: 200}} onClick={createInstrument}>New Instrument</button>
+            <h3>Select your instrument:</h3>
+            <select id="instrumentSelect" onChange={setInstrument} style={{width:200}}>
+                <option>unselected</option>
+                <option>acoustic_grand_piano</option>
+                <option>violin</option>
+            </select>
         </div>
     )
 }
