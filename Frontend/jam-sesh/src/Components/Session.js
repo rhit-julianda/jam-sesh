@@ -8,7 +8,7 @@ import Soundfont from 'soundfont-player';
 
 function Session(){
 	
-    const backendpath = "ws://localhost:8765";
+    const backendpath = "ws://desktop.cullenlakemper.xyz:8765";
 
     let urlsParams = new URLSearchParams(window.location.search);
     const joinCode = urlsParams.get("joinCode");

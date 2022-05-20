@@ -1,6 +1,7 @@
 import asyncio
 import websockets
 import json
+import socket
 from datetime import datetime
 
 import sys
@@ -22,51 +23,53 @@ class WebEngine:
 		userID = hash(datetime.now())//(10**7)
 		
 		await self.session_engine.join_session(websocket, sessionID, userID)
-		async for message in websocket:
-			try:
-				mess = json.loads(message)
-			except:
-				continue
-			print(mess)
-			if "command" not in mess:
-				await websocket.send("Error: No command")
-				continue
+		try:
+			async for message in websocket:
+				try:
+					mess = json.loads(message)
+				except:
+					continue
+				print(mess)
+				if "command" not in mess:
+					await websocket.send("Error: No command")
+					continue
 
-			command = mess["command"]
+				command = mess["command"]
 			
-			if command == "CREATE":
-				if "type" not in mess:
-					await websocket.send("Error: No type given")
-					continue
-				await self.session_engine.create_instrument(sessionID, userID, mess["type"], websocket)
-			elif command == "JOIN":
-				if "instrumentID" not in mess:
-					await websocket.send("Error: No instrument given")
-					continue
-				await self.session_engine.join_instrument(sessionID, userID, mess["instrumentID"], websocket)
-			elif command == "LEAVE":
-				await self.session_engine.leave_instrument(sessionID, userID, websocket)
-			elif command == "NOTE":
-				if "note" not in mess:
-					await websocket.send("Error: No note")
-					continue
-				if "play" not in mess:
-					await websocket.send("Error: No play boolean")
-					continue
-				await self.session_engine.play_note(sessionID, userID, mess["note"], mess["play"], websocket)
-			elif command == "NAME":
-				if "name" not in mess:
-					await websocket.send("Error: No name given")
-					continue
-				await self.session_engine.set_name(sessionID, userID, mess["name"], websocket)
-			else:
-				await websocket.send("Error: Bad command")
-
+				if command == "CREATE":
+					if "type" not in mess:
+						await websocket.send("Error: No type given")
+						continue
+					await self.session_engine.create_instrument(sessionID, userID, mess["type"], websocket)
+				elif command == "JOIN":
+					if "instrumentID" not in mess:
+						await websocket.send("Error: No instrument given")
+						continue
+					await self.session_engine.join_instrument(sessionID, userID, mess["instrumentID"], websocket)
+				elif command == "LEAVE":
+					await self.session_engine.leave_instrument(sessionID, userID, websocket)
+				elif command == "NOTE":
+					if "note" not in mess:
+						await websocket.send("Error: No note")
+						continue
+					if "play" not in mess:
+						await websocket.send("Error: No play boolean")
+						continue
+					await self.session_engine.play_note(sessionID, userID, mess["note"], mess["play"], websocket)
+				elif command == "NAME":
+					if "name" not in mess:
+						await websocket.send("Error: No name given")
+						continue
+					await self.session_engine.set_name(sessionID, userID, mess["name"], websocket)
+				else:
+					await websocket.send("Error: Bad command")
+		except:
+    			pass
 		await self.session_engine.leave_session(sessionID, userID)
 			
 
 	async def serve_helper(self):
-		async with websockets.serve(self.handle, "localhost", 8765):
+		async with websockets.serve(self.handle, socket.gethostbyname("desktop.cullenlakemper.xyz"), 8765):
 			await asyncio.Future()
 
 	def serve(self):
