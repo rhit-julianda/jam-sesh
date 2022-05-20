@@ -1,9 +1,8 @@
 import { Piano, KeyboardShortcuts, MidiNumbers } from 'react-piano';
 import 'react-piano/dist/styles.css';
 import DimensionsProvider from './DimensionsProvider';
-import SoundfontProvider from './SoundfontProvider';
 
-function Instrument({start, end, instrument, playable}) {
+function MuteInstrument({start, end, instrument, playable, sendMessage}) {
     const firstNote = MidiNumbers.fromNote(start);
     const lastNote = MidiNumbers.fromNote(end);
     const keyboardShortcuts = KeyboardShortcuts.create({
@@ -11,30 +10,29 @@ function Instrument({start, end, instrument, playable}) {
       lastNote: lastNote,
       keyboardConfig: KeyboardShortcuts.HOME_ROW,
     });
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
-   
+
+    function sendNote(noteNum){
+        sendMessage({command:"NOTE", play:true, note:noteNum});
+    }
+
+    function stopNote(noteNum){
+        sendMessage({command:"NOTE", play:false, note:noteNum});
+    }
+
     return (
       <DimensionsProvider>
         {({ containerWidth, containerHeight }) => (
-          <SoundfontProvider
-            instrumentName={instrument}
-            audioContext={audioContext}
-            hostname={soundfontHostname}
-            render={({ isLoading, playNote, stopNote }) => (
                 <Piano
                   noteRange={{first: firstNote, last: lastNote}}
                   width={containerWidth}
-                  playNote={playNote}
-                  stopNote={stopNote}
-                  disabled={!playable && !isLoading}
+                  playNote={(midiNumber) => sendNote(midiNumber)}
+                  stopNote={(midiNumber) => stopNote(midiNumber)}
+                  disabled={false}
                   keyboardShortcuts={keyboardShortcuts}
                 />
-            )}
-          />
         )}
       </DimensionsProvider>
     );
   }
 
-  export default Instrument;
+  export default MuteInstrument;

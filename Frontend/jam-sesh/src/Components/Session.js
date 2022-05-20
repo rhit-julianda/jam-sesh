@@ -4,12 +4,23 @@ import SessionInfo from "./SessionInfo";
 import SessionView from "./SessionView";
 import InstrumentPlayer from "./InstrumentPlayer";
 import "./Styles/Session.css";
+import Soundfont from 'soundfont-player';
 
-function Session({joinCode, username}){
-    const [socketUrl, setSocketUrl] = useState("url");
+function Session(){
+	
+    const backendpath = "ws://localhost:8765";
+
+    let urlsParams = new URLSearchParams(window.location.search);
+    const joinCode = urlsParams.get("joinCode");
+    const username = urlsParams.get("username");
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
+ 
+    const [socketUrl, setSocketUrl] = useState(String(backendpath + "/" + joinCode));
     const [initiated, setInitiated] = useState(false);
     const [instruments, setInstruments] = useState([]);
-    const [userLists, setUserLists] = useState([]);
+    const [instrumentIDs, setInstrumentIDs] = useState({});
+    const [instrumentID, setInstrumentID] = useState(-1);
     const [startNote, setStartNote] = useState("c4");
     const [endNote, setEndNote] = useState("g6");
     const [instrument, setInstrument] = useState("unselected");
@@ -21,55 +32,67 @@ function Session({joinCode, username}){
 
     useEffect(() => {
         if (lastJsonMessage != null) {
-            var msg = JSON.parse(lastJsonMessage);
-            switch(msg.command) {
-                case("seshInfo"):
+            let msg = lastJsonMessage;
+            
+            switch(lastJsonMessage.command) {
+                case("SESSION_INFO"):
                     setInstruments(msg.instruments);
-                    setUserLists(msg.userLists);
-                    setStartNote(msg.startNote);
-                    setEndNote(msg.endNote);
+                    setInstrumentID(msg.instrumentID);
+                    setStartNote(keys[msg.start]);
+                    setEndNote(keys[msg.end]);
+                    let ids = {}
+                    for (const instrument of msg.instruments){
+                        ids[instrument.instrumentID] = instrument;
+                    }
+                    setInstrumentIDs(ids);
                     break;
-                case("playNote"):
-                    break;
-                case("stopNote"):
+                case("NOTE"):
+                    let instrument = instrumentIDs[msg.instrumentID];
+                    if(msg.play == "True"){
+                        Soundfont.instrument(new AudioContext(), instrument.type).then(function (ins) {ins.play(msg.note); instrument[msg.note]=ins;});
+                    }
+                    else{
+                        if(instrument[msg.note] !== undefined){
+                        	instrument[msg.note].stop();
+                        }
+                    }
                     break;
                 default:
-                    console.error("Invalid JSON message received");
+                    console.error("Bad Json");
             }
         }
     }, [lastJsonMessage]);
 
     useEffect(() => {
         if (!initiated) {
-            var msg = {
-                command: "joinSesh",
-                joinCode: {joinCode},
-                username: {username}
+            let msg = {
+                command: "NAME",
+                name: username
             }
-            sendJsonMessage(JSON.stringify(msg));
+            sendJsonMessage(msg);
             setInitiated(true);
         }
-    }, [initiated, joinCode, username, sendJsonMessage]);
+    }, [initiated, username, sendJsonMessage]);
 
     useEffect(() => {
-        if (instrument !== "unselected") {
-            setInstrumentPlayer(<InstrumentPlayer instrument={instrument} startNote={startNote} endNote={endNote}/>);
+        if (instrumentID !== -1) {
+            setInstrumentPlayer(<InstrumentPlayer instrument={instrumentIDs[instrumentID].type} startNote={startNote} endNote={endNote} sendMessage={sendJsonMessage}/>);
         } else {
             setInstrumentPlayer(<div/>);
         }
-    }, [instrument, endNote, startNote]);
+    }, [instrumentID, instrumentIDs, endNote, startNote]);
   
     return( 
         <div>
             <SessionInfo code={joinCode} username={username}/>
             <SessionView 
-                instrumentList={instruments} 
-                userLists={userLists} 
+                instrumentList={instruments}
+                instrumentID={instrumentID}
                 setInstrument={() => { 
                     var instrumentSelect = document.getElementById("instrumentSelect");
                     setInstrument(instrumentSelect.options[instrumentSelect.selectedIndex].text);
                 }} 
-                sendMessage={sendMessage}/>
+                sendMessage={sendJsonMessage}/>
             {instrumentPlayer}
         </div>
     )

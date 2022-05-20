@@ -1,18 +1,15 @@
 import React from "react";
-import Instrument from "./Instrument";
+import MuteInstrument from "./MuteInstrument";
 
-var leaveInstrument = function() {
-    console.log("Leave instrument");
-}
-
-function InstrumentPlayer({instrument, startNote, endNote}) {
+function InstrumentPlayer({instrument, startNote, endNote, sendMessage}) {
+    
     return (
         <div id='viewBox'>
             <h1>Your Instrument</h1>
             <div>
-                <Instrument start={startNote} end={endNote} instrument={instrument} playable={true}/>
+                <MuteInstrument start={startNote} end={endNote} instrument={instrument} playable={true} sendMessage={sendMessage}/>
             </div>
-            <button onClick={leaveInstrument}>Leave this instrument</button>
+            <button onClick={() => sendMessage({command:"LEAVE"})}>Leave this instrument</button>
         </div>
     )
 }
